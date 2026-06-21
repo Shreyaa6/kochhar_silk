@@ -83,34 +83,38 @@ export const ShopPage: React.FC = () => {
   }, [categoryFilter]);
 
   return (
-    <div className="container" style={styles.shopPage}>
+    <div className="container shop-page-container" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
       {/* Page Header */}
-      <div style={styles.header}>
-        <h1 style={styles.title}>{categoryTitle}</h1>
-        <div style={styles.goldDivider}></div>
-        <p style={styles.subtitle}>Woven with luxury, crafted for elegance.</p>
+      <div style={{ textAlign: 'center', marginBottom: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <h1 style={{ fontSize: '40px', fontWeight: '400', color: 'var(--color-burgundy)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+          {categoryTitle}
+        </h1>
+        <div className="gold-divider"></div>
+        <p style={{ fontSize: '15px', color: 'var(--color-muted)', fontWeight: '300' }}>
+          Woven with luxury, crafted for elegance.
+        </p>
       </div>
 
       {/* Utilities: Sorting & Mobile Filter Toggle */}
-      <div style={styles.utilityBar}>
+      <div className="utility-bar">
         <button
-          style={styles.filterToggleBtn}
+          className="filter-toggle-btn"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <SlidersHorizontal size={16} style={{ marginRight: 8 }} />
           Filters {sidebarOpen ? '(Close)' : ''}
         </button>
 
-        <div style={styles.resultsCount}>
+        <div className="results-count">
           Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'creation' : 'creations'}
         </div>
 
-        <div style={styles.sortWrapper}>
+        <div className="sort-wrapper">
           <ArrowUpDown size={16} color="var(--color-burgundy)" style={{ marginRight: 8 }} />
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value as any)}
-            style={styles.sortSelect}
+            className="sort-select"
           >
             <option value="featured">Sort: Featured</option>
             <option value="low-to-high">Price: Low to High</option>
@@ -119,26 +123,29 @@ export const ShopPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Background Overlay for mobile filter drawer */}
+      {sidebarOpen && <div className="shop-sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>}
+
       {/* Layout Columns */}
-      <div style={styles.layoutGrid}>
+      <div className="shop-layout-grid">
         {/* Sidebar Filter Panel */}
-        <aside style={{
-          ...styles.sidebar,
-          display: sidebarOpen ? 'block' : styles.sidebar.display // Mobile responsiveness toggle
-        }} className="shop-sidebar-panel">
+        <aside className={`shop-sidebar-panel ${sidebarOpen ? 'open' : ''}`}>
           {/* Section: Category */}
-          <div style={styles.filterSection}>
-            <h4 style={styles.filterSectionTitle}>Collection</h4>
-            <div style={styles.filterOptions}>
+          <div className="filter-section">
+            <h4 className="filter-section-title">Collection</h4>
+            <div className="filter-options">
               {['All', 'Saree', 'Lehenga', 'Suit'].map((cat) => (
                 <button
                   key={cat}
+                  className="filter-option-btn"
                   style={{
-                    ...styles.filterOptionBtn,
                     color: categoryFilter === cat ? 'var(--color-burgundy)' : 'var(--color-muted)',
                     fontWeight: categoryFilter === cat ? '600' : '400'
                   }}
-                  onClick={() => setCategoryFilter(cat)}
+                  onClick={() => {
+                    setCategoryFilter(cat);
+                    setSidebarOpen(false); // Close sidebar on mobile select
+                  }}
                 >
                   {cat === 'All' ? 'All Creations' : cat + 's'}
                 </button>
@@ -147,18 +154,21 @@ export const ShopPage: React.FC = () => {
           </div>
 
           {/* Section: Fabric */}
-          <div style={styles.filterSection}>
-            <h4 style={styles.filterSectionTitle}>Fabric</h4>
-            <div style={styles.filterOptions}>
+          <div className="filter-section">
+            <h4 className="filter-section-title">Fabric</h4>
+            <div className="filter-options">
               {fabrics.map((fab) => (
                 <button
                   key={fab}
+                  className="filter-option-btn"
                   style={{
-                    ...styles.filterOptionBtn,
                     color: selectedFabric === fab ? 'var(--color-burgundy)' : 'var(--color-muted)',
                     fontWeight: selectedFabric === fab ? '600' : '400'
                   }}
-                  onClick={() => setSelectedFabric(fab)}
+                  onClick={() => {
+                    setSelectedFabric(fab);
+                    setSidebarOpen(false);
+                  }}
                 >
                   {fab}
                 </button>
@@ -167,18 +177,21 @@ export const ShopPage: React.FC = () => {
           </div>
 
           {/* Section: Color */}
-          <div style={styles.filterSection}>
-            <h4 style={styles.filterSectionTitle}>Color</h4>
-            <div style={styles.filterOptions}>
+          <div className="filter-section">
+            <h4 className="filter-section-title">Color</h4>
+            <div className="filter-options">
               {colors.map((col) => (
                 <button
                   key={col}
+                  className="filter-option-btn"
                   style={{
-                    ...styles.filterOptionBtn,
                     color: selectedColor === col ? 'var(--color-burgundy)' : 'var(--color-muted)',
                     fontWeight: selectedColor === col ? '600' : '400'
                   }}
-                  onClick={() => setSelectedColor(col)}
+                  onClick={() => {
+                    setSelectedColor(col);
+                    setSidebarOpen(false);
+                  }}
                 >
                   {col}
                 </button>
@@ -187,10 +200,10 @@ export const ShopPage: React.FC = () => {
           </div>
 
           {/* Section: Price Slider */}
-          <div style={styles.filterSection}>
-            <div style={styles.priceHeader}>
-              <h4 style={styles.filterSectionTitle}>Max Price</h4>
-              <span style={styles.priceVal}>₹{priceFilter.toLocaleString('en-IN')}</span>
+          <div className="filter-section">
+            <div className="price-header">
+              <h4 className="filter-section-title">Max Price</h4>
+              <span className="price-val">₹{priceFilter.toLocaleString('en-IN')}</span>
             </div>
             <input
               type="range"
@@ -199,9 +212,9 @@ export const ShopPage: React.FC = () => {
               step={5000}
               value={priceFilter}
               onChange={(e) => setPriceFilter(Number(e.target.value))}
-              style={styles.priceSlider}
+              className="price-slider"
             />
-            <div style={styles.sliderLimits}>
+            <div className="slider-limits">
               <span>₹10K</span>
               <span>₹100K</span>
             </div>
@@ -209,8 +222,11 @@ export const ShopPage: React.FC = () => {
 
           {/* Reset Action */}
           <button
-            style={styles.resetBtn}
-            onClick={handleResetFilters}
+            className="reset-btn"
+            onClick={() => {
+              handleResetFilters();
+              setSidebarOpen(false);
+            }}
           >
             <RotateCcw size={14} style={{ marginRight: 8 }} />
             Clear Filters
@@ -218,12 +234,16 @@ export const ShopPage: React.FC = () => {
         </aside>
 
         {/* Product Grid Area */}
-        <main style={styles.mainGrid}>
+        <main style={{ flex: 1 }}>
           {filteredProducts.length === 0 ? (
-            <div style={styles.emptyState}>
+            <div className="shop-empty-state">
               <RotateCcw size={48} color="var(--color-champagne)" style={{ marginBottom: 16 }} />
-              <h3 style={styles.emptyTitle}>No Creations Match Your Selection</h3>
-              <p style={styles.emptyText}>Try relaxing your filter parameters or search queries to view our weaving atelier pieces.</p>
+              <h3 style={{ fontSize: '22px', color: 'var(--color-burgundy)', marginBottom: '8px' }}>
+                No Creations Match Your Selection
+              </h3>
+              <p style={{ fontSize: '14px', color: 'var(--color-muted)', fontWeight: '300', maxWidth: '450px' }}>
+                Try relaxing your filter parameters or search queries to view our weaving atelier pieces.
+              </p>
               <button
                 className="btn-luxury"
                 style={{ marginTop: 24 }}
@@ -233,9 +253,9 @@ export const ShopPage: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div style={styles.productsGrid}>
+            <div className="products-grid">
               {filteredProducts.map((product) => (
-                <div key={product.id} style={styles.cardWrapper}>
+                <div key={product.id} className="card-wrapper">
                   <ProductCard product={product} />
                 </div>
               ))}
@@ -247,216 +267,4 @@ export const ShopPage: React.FC = () => {
   );
 };
 
-const styles: { [key: string]: React.CSSProperties } = {
-  shopPage: {
-    paddingTop: '40px',
-    paddingBottom: '80px',
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '40px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: '40px',
-    fontWeight: '400',
-    color: 'var(--color-burgundy)',
-    letterSpacing: '0.05em',
-    textTransform: 'uppercase',
-  },
-  goldDivider: {
-    height: '1.5px',
-    width: '80px',
-    backgroundColor: 'var(--color-taupe)',
-    margin: '12px 0',
-  },
-  subtitle: {
-    fontSize: '15px',
-    color: 'var(--color-muted)',
-    fontWeight: '300',
-  },
-  utilityBar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '16px 0',
-    borderTop: '1px solid var(--color-border)',
-    borderBottom: '1px solid var(--color-border)',
-    marginBottom: '40px',
-  },
-  filterToggleBtn: {
-    display: 'none',
-    alignItems: 'center',
-    cursor: 'pointer',
-    fontSize: '13px',
-    fontWeight: '500',
-    color: 'var(--color-burgundy)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    padding: '6px 12px',
-    border: '1px solid var(--color-border)',
-  },
-  resultsCount: {
-    fontSize: '13px',
-    color: 'var(--color-muted)',
-    fontWeight: '300',
-  },
-  sortWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  sortSelect: {
-    cursor: 'pointer',
-    padding: '6px 10px',
-    fontSize: '13px',
-    fontWeight: '500',
-    color: 'var(--color-burgundy)',
-    border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-white)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  layoutGrid: {
-    display: 'grid',
-    gridTemplateColumns: '250px 1fr',
-    gap: '40px',
-  },
-  sidebar: {
-    display: 'block', // Default desktop
-  },
-  filterSection: {
-    marginBottom: '30px',
-    borderBottom: '1px solid var(--color-light-gray)',
-    paddingBottom: '20px',
-  },
-  filterSectionTitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '13px',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: '0.1em',
-    color: 'var(--color-burgundy)',
-    marginBottom: '15px',
-  },
-  filterOptions: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-    alignItems: 'flex-start',
-  },
-  filterOptionBtn: {
-    fontSize: '13px',
-    cursor: 'pointer',
-    transition: 'var(--transition-smooth)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    padding: '2px 0',
-  },
-  priceHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '10px',
-  },
-  priceVal: {
-    fontSize: '13px',
-    fontWeight: '600',
-    color: 'var(--color-taupe)',
-  },
-  priceSlider: {
-    width: '100%',
-    cursor: 'pointer',
-    accentColor: 'var(--color-burgundy)',
-  },
-  sliderLimits: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontSize: '11px',
-    color: 'var(--color-muted)',
-    marginTop: '6px',
-  },
-  resetBtn: {
-    width: '100%',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '12px 0',
-    border: '1px solid var(--color-border)',
-    color: 'var(--color-muted)',
-    fontSize: '12px',
-    fontWeight: '500',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    cursor: 'pointer',
-    transition: 'var(--transition-smooth)',
-    marginTop: '10px',
-  },
-  mainGrid: {
-    flex: 1,
-  },
-  emptyState: {
-    padding: '80px 20px',
-    textAlign: 'center',
-    backgroundColor: 'var(--color-light-gray)',
-    border: '1px dashed var(--color-border)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyTitle: {
-    fontSize: '22px',
-    color: 'var(--color-burgundy)',
-    marginBottom: '8px',
-  },
-  emptyText: {
-    fontSize: '14px',
-    color: 'var(--color-muted)',
-    fontWeight: '300',
-    maxWidth: '450px',
-  },
-  productsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-    gap: '30px',
-  },
-  cardWrapper: {
-    animation: 'fadeIn 0.5s ease-out',
-  }
-};
-
-// Inject CSS style for catalog responsiveness
-const styleCss = `
-  .shop-sidebar-panel button:hover {
-    color: var(--color-burgundy) !important;
-    padding-left: 4px;
-  }
-  select:focus {
-    border-color: var(--color-taupe);
-  }
-  @media (max-width: 820px) {
-    div[style*="layoutGrid"] {
-      grid-template-columns: 1fr !important;
-    }
-    aside[style*="sidebar"] {
-      display: none !important; /* Managed by filter toggle button on mobile */
-    }
-    .shop-sidebar-panel {
-      padding: 20px !important;
-      border: 1px solid var(--color-border) !important;
-      background-color: var(--color-light-gray) !important;
-      margin-bottom: 30px !important;
-    }
-    button[style*="filterToggleBtn"] {
-      display: inline-flex !important;
-    }
-  }
-`;
-if (typeof document !== 'undefined') {
-  const style = document.createElement('style');
-  style.appendChild(document.createTextNode(styleCss));
-  document.head.appendChild(style);
-}
 export default ShopPage;
